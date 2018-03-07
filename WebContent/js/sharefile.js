@@ -105,10 +105,10 @@ class ShareFile {
 			
 			else {
 				var percent = Math.floor(chunk * ShareFile.chunkSize * 100 / this.file.size);
+				var percent = percent > 100 ? 100 : percent;
 				if(percent == 100) {
 					this.uploads[data.ip].children('td').children('button').removeAttr('disabled');
 				}
-				var percent = percent > 100 ? 100 : percent;
 				var progress = this.uploads[data.ip].children('td').children('.progress').children('.progress-bar');
 				progress.css('width', percent + '%');
 				if(percent == 100) {
