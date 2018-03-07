@@ -42,7 +42,7 @@ public class DownloadServlet extends HttpServlet {
 
 					JsonObject requestFile = new JsonObject();
 					requestFile.addProperty("action", "download");
-					requestFile.addProperty("ip", request.getRemoteAddr());
+					requestFile.addProperty("ip", request.getRemoteAddr() + ":" + request.getRemotePort());
 					requestFile.addProperty("chunk", chunkInfo.chunk);
 
 					session.getBasicRemote().sendText(requestFile.toString());
@@ -52,26 +52,43 @@ public class DownloadServlet extends HttpServlet {
 						@Override
 						public void onMessage(String message) {
 							JsonObject jsonMessage = new JsonParser().parse(message).getAsJsonObject();
-							if (jsonMessage.get("action").getAsString().equals("download")) {
+							String action = jsonMessage.get("action").getAsString();
+							if (action.equals("download")) {
 								int chunk = jsonMessage.get("chunk").getAsInt();
-								String blob = jsonMessage.get("blob").getAsString();
 								
-								if(blob.isEmpty()) {
-									webSocket.removeHandler(this);
-									asyncContext.complete();
-								}
-								
-								else if (chunk == chunkInfo.chunk) {
-									byte[] buffer = Base64.getDecoder().decode(blob);
-									try {
-										out.write(buffer);
-										chunkInfo.chunk++;
-										requestFile.addProperty("chunk", chunkInfo.chunk);
-										session.getBasicRemote().sendText(requestFile.toString());
-									} catch (IOException e) {
-										e.printStackTrace();
+								if (chunk == chunkInfo.chunk) {
+									String blob = jsonMessage.get("blob").getAsString();
+									if(blob.isEmpty()) {
+										webSocket.removeHandler(this);
+										asyncContext.complete();
+									}
+									
+									else {
+										byte[] buffer = Base64.getDecoder().decode(blob);
+										try {
+											out.write(buffer);
+											chunkInfo.chunk++;
+											requestFile.addProperty("chunk", chunkInfo.chunk);
+											session.getBasicRemote().sendText(requestFile.toString());
+										} catch (IOException e) {
+											e.printStackTrace();
+											webSocket.removeHandler(this);
+											JsonObject terminateRequest = new JsonObject();
+											terminateRequest.addProperty("action", "terminate");
+											terminateRequest.addProperty("ip", request.getRemoteAddr() + ":" + request.getRemotePort());
+											try {
+												session.getBasicRemote().sendText(terminateRequest.toString());
+											} catch (IOException e1) {
+												e1.printStackTrace();
+											}
+										}
 									}
 								}
+							}
+							
+							else if(action.equals("unshare")) {
+								webSocket.removeHandler(this);
+								asyncContext.complete();
 							}
 						}
 					}; 

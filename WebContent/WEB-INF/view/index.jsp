@@ -15,10 +15,23 @@
 	</head>
 	<body>
 		<div class="container">
-			<div class="progress">
-				<div class="progress-bar progress-bar-striped active" role="progressbar" style="width:50%">
-			    	70%
-			  	</div>
+			
+			<div class="wrapper row col-md-12">
+				<div class="drop">
+					<div class="cont">
+				    	<i class="fa fa-cloud-upload"></i>
+					    <div class="tit">
+					    	Drag & Drop
+					    </div>
+					    <div class="desc">
+					        Don't close your browser until files are completely sent
+					    </div>
+					    <div class="browse">
+					        Share your files
+					    </div>
+				   	</div>
+				    <input id="file" type="file" />
+				</div>
 			</div>
 			
 			<div class="row">
@@ -26,9 +39,10 @@
 					<table class="table table-striped hidden" id="shares">
 						<thead>
 					    	<tr>
-					        	<th>File</th>
+					        	<th>Shared File</th>
 					        	<th>Size</th>
 					        	<th>Link</th>
+					        	<th>Remove</th>
 					    	</tr>
 					    </thead>
 					    <tbody>
@@ -37,15 +51,38 @@
 				</div>
 			</div>
 			
-			<input type="file" id="file" />
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped hidden" id="uploads">
+						<thead>
+					    	<tr>
+					        	<th>Uploaded File</th>
+					        	<th>Receiver</th>
+					        	<th>Sent</th>
+					        	<th>Remove</th>
+					    	</tr>
+					    </thead>
+					    <tbody>
+					    </tbody>
+					</table>
+				</div>
+			</div>
+			
 		</div>
 		<script>
-			$('#file').change(function() {
+			$('#file').change(() => {
 				var file = document.getElementById('file').files[0];
 				if(file) {
 					new ShareFile(file);
+					$("#file").val('');
 				}
 			});
+			
+			window.onbeforeunload = () => {
+				if(ShareFile.activeUploads > 0) {
+					return true;
+				}
+			};
 		</script>
 	</body>
 </html>

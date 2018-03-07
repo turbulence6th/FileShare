@@ -43,7 +43,7 @@ public class WebSocket {
 	@SuppressWarnings("unchecked")
 	@OnMessage(maxMessageSize = 1024 * 8)
 	public void handleMessage(Session session, String message) throws IOException {
-		System.out.println(message);
+//		System.out.println(message);
 		Map<String, WebSocket> files = (Map<String, WebSocket>) this.context.getAttribute("files");
 		JsonObject request = new JsonParser().parse(message).getAsJsonObject();
 		if(request.get("action").getAsString().equals("share")) {
@@ -68,6 +68,11 @@ public class WebSocket {
 			Map<String, Session> files = (Map<String, Session>) this.context.getAttribute("files");
 			files.remove(uuid);
 		}	
+		
+		JsonObject request = new JsonObject();
+		request.addProperty("action", "unshare");
+		
+		this.handlers.forEach(handler -> handler.onMessage(request.toString()));
 	}
 
 	@OnError
