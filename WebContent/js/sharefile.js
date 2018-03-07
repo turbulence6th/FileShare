@@ -75,7 +75,7 @@ class ShareFile {
 					"<td style=\"width: 50%\">" + 
 						"<div class=\"progress\">" + 
 							"<div class=\"progress-bar progress-bar-striped active\" role=\"progressbar\" style=\"width:0%\">" +
-								"70%" +
+								"0%" +
 							"</div>" +
 						"</div>" +
 					"</td>" +
@@ -85,9 +85,9 @@ class ShareFile {
 						"</button>" + 
 					"</td>" +
 				"</tr>");
-				this.uploads[data.ip].children('td').children('button').click(() => {
-					this.uploads[data.ip].remove();
-					delete this.uploads[data.ip];
+				this.uploads[data.ip].children('td').children('button').click(function() {
+					var parent = $(this).parent().parent();
+					parent.remove();
 					ShareFile.uploads--;
 					if(ShareFile.uploads == 0) {
 						$('#uploads').addClass('hidden');
