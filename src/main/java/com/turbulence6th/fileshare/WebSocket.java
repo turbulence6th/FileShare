@@ -10,7 +10,6 @@ import javax.servlet.ServletContext;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
-import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
@@ -41,9 +40,7 @@ public class WebSocket {
 	}
 
 	@SuppressWarnings("unchecked")
-	@OnMessage(maxMessageSize = 1024 * 8)
 	public void handleMessage(Session session, String message) throws IOException {
-//		System.out.println(message);
 		Map<String, WebSocket> files = (Map<String, WebSocket>) this.context.getAttribute("files");
 		JsonObject request = new JsonParser().parse(message).getAsJsonObject();
 		if(request.get("action").getAsString().equals("share")) {
@@ -56,9 +53,6 @@ public class WebSocket {
 			response.addProperty("uuid", this.uuid);
 			session.getBasicRemote().sendText(response.toString());
 		}
-		
-		this.handlers.forEach(handler -> handler.onMessage(message));
-		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -86,6 +80,10 @@ public class WebSocket {
 	
 	public void removeHandler(WebSocketMessageHandler handler) {
 		this.handlers.remove(handler);
+	}
+	
+	public List<WebSocketMessageHandler> getHandlers() {
+		return handlers;
 	}
 	
 	public boolean hasFile() {

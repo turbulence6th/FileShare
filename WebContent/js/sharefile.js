@@ -125,13 +125,24 @@ class ShareFile {
 			var blob = this.file.slice(chunk * ShareFile.chunkSize, (chunk + 1) * ShareFile.chunkSize);
 			var reader = new FileReader();
 			reader.onload = function(event) {
-				if(that.websocket.readyState == 1) {
-					that.websocket.send(JSON.stringify({
+				$.ajax({
+					url: '/upload', 
+					type: 'POST',
+					data: {
+						uuid: that.uuid,
 						action: 'download',
 						chunk: data.chunk,
 						blob: btoa(event.target.result)
-					}));
-				}
+					}
+				});
+				
+//				if(that.websocket.readyState == 1) {
+//					that.websocket.send(JSON.stringify({
+//						action: 'download',
+//						chunk: data.chunk,
+//						blob: btoa(event.target.result)
+//					}));
+//				}
 			};
 			reader.readAsBinaryString(blob);
 		}
@@ -181,7 +192,7 @@ class ShareFile {
 	}
 }
 
-ShareFile.chunkSize = 1024 * 5;
+ShareFile.chunkSize = 1024 * 1024;
 ShareFile.count = 0;
 ShareFile.uploads = 0;
 ShareFile.activeUploads = 0;
