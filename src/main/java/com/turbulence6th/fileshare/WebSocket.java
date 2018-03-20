@@ -10,6 +10,7 @@ import javax.servlet.ServletContext;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
+import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
@@ -40,7 +41,9 @@ public class WebSocket {
 	}
 
 	@SuppressWarnings("unchecked")
+	@OnMessage(maxMessageSize = 1024 * 8)
 	public void handleMessage(Session session, String message) throws IOException {
+//		System.out.println(message);
 		Map<String, WebSocket> files = (Map<String, WebSocket>) this.context.getAttribute("files");
 		JsonObject request = new JsonParser().parse(message).getAsJsonObject();
 		if(request.get("action").getAsString().equals("share")) {
