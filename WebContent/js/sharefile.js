@@ -187,7 +187,9 @@ class ShareFile {
 			ShareFile.activeUploads -= this.activeUploads;
 			u.children('td').children('button').removeAttr('disabled');
 			var progress = u.children('td').children('.progress').children('.progress-bar');
-			progress.text('failed');
+			if (progress.text() !== 'completed') {
+				progress.text('failed');
+			}
 		}
 	}
 }
