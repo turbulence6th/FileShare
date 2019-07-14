@@ -192,7 +192,7 @@ class ShareFile {
 	}
 }
 
-ShareFile.chunkSize = 1024;
+ShareFile.chunkSize = 1024 * 1024;
 ShareFile.count = 0;
 ShareFile.uploads = 0;
 ShareFile.activeUploads = 0;
