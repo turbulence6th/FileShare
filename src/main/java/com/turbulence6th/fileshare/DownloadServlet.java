@@ -42,7 +42,7 @@ public class DownloadServlet extends HttpServlet {
 
 					JsonObject requestFile = new JsonObject();
 					requestFile.addProperty("action", "download");
-					requestFile.addProperty("ip", request.getRemoteAddr() + ":" + request.getRemotePort());
+					requestFile.addProperty("ip", request.getHeader("X-Forwarded-For") + ":" + request.getRemotePort());
 					requestFile.addProperty("chunk", chunkInfo.chunk);
 
 					session.getBasicRemote().sendText(requestFile.toString());
@@ -75,7 +75,7 @@ public class DownloadServlet extends HttpServlet {
 											webSocket.removeHandler(this);
 											JsonObject terminateRequest = new JsonObject();
 											terminateRequest.addProperty("action", "terminate");
-											terminateRequest.addProperty("ip", request.getRemoteAddr() + ":" + request.getRemotePort());
+											terminateRequest.addProperty("ip", request.getHeader("X-Forwarded-For") + ":" + request.getRemotePort());
 											try {
 												session.getBasicRemote().sendText(terminateRequest.toString());
 											} catch (IOException e1) {
