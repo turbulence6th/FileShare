@@ -42,6 +42,7 @@
 					        	<th>Shared File</th>
 					        	<th>Size</th>
 					        	<th>Link</th>
+								<th>Whatsapp</th>
 					        	<th>Remove</th>
 					    	</tr>
 					    </thead>

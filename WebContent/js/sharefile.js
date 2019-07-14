@@ -44,13 +44,19 @@ class ShareFile {
 			this.dom = $("<tr>" +
 				"<td>" + this.file.name + "</td>" +
 				"<td>" + this.size() + "</td>" +
-				"<td>" + location.origin + "/file/" + this.uuid + "</td>" +
-				"<td>" + 
-					"<button class=\"btn btn-default\">" + 
-						"<span class=\"glyphicon glyphicon-remove-circle gi-2x\"></span>" + 
-					"</button>" + 
+				"<td><input class=\"form-control\" value=\"" + location.origin + "/file/" + this.uuid + "\" disabled></td>" +
+				"<td>" +
+					"<a href=\"https://api.whatsapp.com/send?text=" + location.origin + "/file/" + this.uuid + "\" target=\"_blank\">" +
+						"<i class=\"glyphicon glyphicon-share-alt\"</i>" +
+					"</a>" +
+				"</td>" +
+				"<td>" +
+					"<button class=\"btn btn-default\">" +
+						"<span class=\"glyphicon glyphicon-remove-circle gi-2x\"></span>" +
+					"</button>" +
 				"</td>" +
 			"</tr>");
+
 			this.dom.children('td').children('button').click(() => {
 				this.unshare();
 				if(ShareFile.count == 0) {
@@ -74,7 +80,7 @@ class ShareFile {
 					"<td style=\"width: 20%\">" + data.ip.substring(0, data.ip.lastIndexOf(':')) + "</td>" +
 					"<td style=\"width: 50%\">" + 
 						"<div class=\"progress\">" + 
-							"<div class=\"progress-bar progress-bar-striped active\" role=\"progressbar\" style=\"width:0%\">" +
+							"<div class=\"progress-bar\" role=\"progressbar\" style=\"width:0%\">" +
 								"0%" +
 							"</div>" +
 						"</div>" +

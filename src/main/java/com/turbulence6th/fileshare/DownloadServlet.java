@@ -3,6 +3,7 @@ package com.turbulence6th.fileshare;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletContext;
@@ -37,12 +38,15 @@ public class DownloadServlet extends HttpServlet {
 			asyncContext.start(() -> {
 				try {
 					ServletOutputStream out = asyncContext.getResponse().getOutputStream();
-					
+
+					String ip = Optional.ofNullable(request.getHeader("X-Forwarded-For"))
+							.orElse(request.getRemoteHost()) + ":" + request.getRemotePort();
+
 					ChunkInfo chunkInfo = new ChunkInfo();
 
 					JsonObject requestFile = new JsonObject();
 					requestFile.addProperty("action", "download");
-					requestFile.addProperty("ip", request.getHeader("X-Forwarded-For") + ":" + request.getRemotePort());
+					requestFile.addProperty("ip", ip);
 					requestFile.addProperty("chunk", chunkInfo.chunk);
 
 					session.getBasicRemote().sendText(requestFile.toString());
@@ -75,7 +79,7 @@ public class DownloadServlet extends HttpServlet {
 											webSocket.removeHandler(this);
 											JsonObject terminateRequest = new JsonObject();
 											terminateRequest.addProperty("action", "terminate");
-											terminateRequest.addProperty("ip", request.getHeader("X-Forwarded-For") + ":" + request.getRemotePort());
+											terminateRequest.addProperty("ip", ip);
 											try {
 												session.getBasicRemote().sendText(terminateRequest.toString());
 											} catch (IOException e1) {
